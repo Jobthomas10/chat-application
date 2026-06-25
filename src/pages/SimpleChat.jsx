@@ -37,6 +37,7 @@ import { signInAsGuest, logoutUser } from '../services/auth';
 import {
   subscribeChatRooms,
   createChatRoom,
+  deleteChatRoom,
   subscribeMessages,
   sendMessage,
   deleteMessage,
@@ -245,6 +246,22 @@ const SimpleChat = () => {
     }
   };
 
+  // Handle Delete Room
+  const handleDeleteRoom = async (roomId, e) => {
+    e.stopPropagation(); // Prevent selecting the room when clicking delete
+    if (window.confirm('Are you sure you want to delete this chat room? All messages in this room will be lost.')) {
+      try {
+        await deleteChatRoom(roomId);
+        if (selectedRoom?.id === roomId) {
+          setSelectedRoom(null);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Failed to delete room. Only the creator of this room can delete it.');
+      }
+    }
+  };
+
   // Render Nickname Gate (if not logged in)
   if (authLoading) {
     return (
@@ -397,7 +414,27 @@ const SimpleChat = () => {
         {rooms.map((room) => {
           const isSelected = selectedRoom?.id === room.id;
           return (
-            <ListItem key={room.id} disablePadding sx={{ mb: 0.5 }}>
+            <ListItem
+              key={room.id}
+              disablePadding
+              sx={{ mb: 0.5 }}
+              secondaryAction={
+                room.createdBy === currentUser.uid && (
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    size="small"
+                    onClick={(e) => handleDeleteRoom(room.id, e)}
+                    sx={{
+                      color: isSelected ? 'rgba(255,255,255,0.7)' : 'text.secondary',
+                      '&:hover': { color: 'error.main' },
+                    }}
+                  >
+                    <DeleteIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                )
+              }
+            >
               <ListItemButton
                 selected={isSelected}
                 onClick={() => {
@@ -406,6 +443,7 @@ const SimpleChat = () => {
                 }}
                 sx={{
                   borderRadius: 2,
+                  pr: room.createdBy === currentUser.uid ? 6 : 2, // Leave space for delete button
                   '&.Mui-selected': {
                     bgcolor: 'primary.main',
                     color: 'primary.contrastText',
@@ -527,10 +565,9 @@ const SimpleChat = () => {
                           bgcolor: isOwnMessage ? 'primary.main' : 'background.paper',
                           color: isOwnMessage ? 'primary.contrastText' : 'text.primary',
                           position: 'relative',
-                          '&:hover .delete-btn': { opacity: 1 },
                         }}
                       >
-                        <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', pr: isOwnMessage ? 3 : 0 }}>
+                        <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', pr: isOwnMessage ? 4 : 0 }}>
                           {msg.text}
                         </Typography>
                         
@@ -546,13 +583,13 @@ const SimpleChat = () => {
                             }}
                             sx={{
                               position: 'absolute',
-                              right: 2,
-                              top: 2,
+                              right: 4,
+                              top: 4,
                               color: 'rgba(255, 255, 255, 0.7)',
-                              opacity: 0,
+                              opacity: 0.6,
                               transition: 'opacity 0.2s',
                               padding: '2px',
-                              '&:hover': { color: '#fff', bgcolor: 'rgba(0,0,0,0.1)' },
+                              '&:hover': { color: '#fff', opacity: 1, bgcolor: 'rgba(0,0,0,0.1)' },
                             }}
                           >
                             <DeleteIcon sx={{ fontSize: 14 }} />
