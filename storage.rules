@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Profile photos: readable by anyone, writable only by the owner
+    match /profile_photos/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Chat room shared images: readable and writable by any authenticated user
+    match /chat_images/{roomId}/{allPaths=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
