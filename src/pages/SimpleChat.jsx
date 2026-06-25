@@ -18,8 +18,6 @@ import {
   CircularProgress,
   AppBar,
   Toolbar,
-  useMediaQuery,
-  useTheme,
   Drawer,
 } from '@mui/material';
 import {
@@ -50,8 +48,6 @@ import { getUserInitials } from '../utils/helpers';
 
 const SimpleChat = () => {
   const { currentUser, profileData, loading: authLoading } = useAuth();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { mode, toggleColorMode } = useContext(ColorModeContext);
 
   // Layout & UI States
@@ -470,23 +466,20 @@ const SimpleChat = () => {
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', bgcolor: 'background.chat' }}>
       
       {/* Desktop Sidebar */}
-      {!isMobile && (
-        <Box sx={{ width: 280, minWidth: 280, borderRight: '1px solid', borderColor: 'divider', height: '100%' }}>
-          {sidebarContent}
-        </Box>
-      )}
+      <Box sx={{ display: { xs: 'none', md: 'block' }, width: 280, minWidth: 280, borderRight: '1px solid', borderColor: 'divider', height: '100%' }}>
+        {sidebarContent}
+      </Box>
 
       {/* Mobile Drawer Sidebar */}
-      {isMobile && (
-        <Drawer
-          anchor="left"
-          open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
-          PaperProps={{ sx: { width: 280 } }}
-        >
-          {sidebarContent}
-        </Drawer>
-      )}
+      <Drawer
+        anchor="left"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        PaperProps={{ sx: { width: 280 } }}
+        sx={{ display: { xs: 'block', md: 'none' } }}
+      >
+        {sidebarContent}
+      </Drawer>
 
       {/* Right Chat Panel */}
       <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
@@ -495,11 +488,14 @@ const SimpleChat = () => {
         <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
           <Toolbar sx={{ justifyContent: 'space-between', minHeight: 64 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {isMobile && (
-                <IconButton edge="start" color="inherit" onClick={() => setMobileOpen(true)}>
-                  <MenuIcon />
-                </IconButton>
-              )}
+              <IconButton 
+                edge="start" 
+                color="inherit" 
+                onClick={() => setMobileOpen(true)}
+                sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+              >
+                <MenuIcon />
+              </IconButton>
               {selectedRoom ? (
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: 700 }}>
@@ -516,11 +512,19 @@ const SimpleChat = () => {
               )}
             </Box>
             
-            {!isMobile && (
+            <Box sx={{ display: 'flex', gap: 0.5 }}>
               <IconButton onClick={toggleColorMode} color="inherit">
                 <PaletteIcon />
               </IconButton>
-            )}
+              <IconButton 
+                onClick={handleLogout} 
+                color="error"
+                sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+                title="Sign Out"
+              >
+                <LogoutIcon />
+              </IconButton>
+            </Box>
           </Toolbar>
         </AppBar>
 
