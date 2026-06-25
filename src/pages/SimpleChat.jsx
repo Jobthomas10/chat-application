@@ -482,51 +482,59 @@ const SimpleChat = () => {
       </Drawer>
 
       {/* Right Chat Panel */}
-      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         
-        {/* App Bar (Mobile Top bar) */}
-        <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
-          <Toolbar sx={{ justifyContent: 'space-between', minHeight: 64 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <IconButton 
-                edge="start" 
-                color="inherit" 
-                onClick={() => setMobileOpen(true)}
-                sx={{ display: { xs: 'inline-flex', md: 'none' } }}
-              >
-                <MenuIcon />
-              </IconButton>
-              {selectedRoom ? (
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                    #{selectedRoom.roomName}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {selectedRoom.description || 'No description'}
-                  </Typography>
-                </Box>
-              ) : (
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  ChatCord
+        {/* Custom Header Bar */}
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          height: 64, 
+          minHeight: 64, 
+          px: 2, 
+          bgcolor: 'background.paper', 
+          borderBottom: '1px solid', 
+          borderColor: 'divider' 
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton 
+              edge="start" 
+              color="inherit" 
+              onClick={() => setMobileOpen(true)}
+              sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            {selectedRoom ? (
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
+                  #{selectedRoom.roomName}
                 </Typography>
-              )}
-            </Box>
-            
-            <Box sx={{ display: 'flex', gap: 0.5 }}>
-              <IconButton onClick={toggleColorMode} color="inherit">
-                <PaletteIcon />
-              </IconButton>
-              <IconButton 
-                onClick={handleLogout} 
-                color="error"
-                sx={{ display: { xs: 'inline-flex', md: 'none' } }}
-                title="Sign Out"
-              >
-                <LogoutIcon />
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
+                <Typography variant="caption" color="text.secondary">
+                  {selectedRoom.description || 'No description'}
+                </Typography>
+              </Box>
+            ) : (
+              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
+                ChatCord
+              </Typography>
+            )}
+          </Box>
+          
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
+            <IconButton onClick={toggleColorMode} color="inherit">
+              <PaletteIcon />
+            </IconButton>
+            <IconButton 
+              onClick={handleLogout} 
+              color="error"
+              sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+              title="Sign Out"
+            >
+              <LogoutIcon />
+            </IconButton>
+          </Box>
+        </Box>
 
         {/* Chat Feed Area */}
         <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
